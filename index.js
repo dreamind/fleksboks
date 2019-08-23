@@ -26,7 +26,7 @@ const resetContainer = () => {
     .css("height", l);
 };
 
-const resetItemStyle = (selector, param) => {
+const resetStyle = (selector, param) => {
   const { prop, values } = param;
   const def = param.default || values[0];
   update.item(prop, def, selector);
@@ -37,9 +37,9 @@ const resetItemStyle = (selector, param) => {
   }
 };
 
-const resetItemStyles = selector => {
-  _.each(itemParams, param => {
-    resetItemStyle(selector, param);
+const resetStyles = (selector, whiteList) => {
+  _.each(whiteList, param => {
+    resetStyle(selector, param);
   });
 };
 
@@ -51,11 +51,18 @@ const loadStyles = (selector, whiteList, type = "item") => {
     return;
   }
 
-  _.each(_.keys(whiteList), prop => {
+  _.each(whiteList, (params, prop) => {
+    const options = params.values
     const values = styleSet[prop];
     const control = $("#" + type + "-" + prop);
     if (_.size(values) === 1) {
-      control.val(_.keys(values)[0]);
+      let val = _.keys(values)[0]
+      if (!_.includes(options, val)) {
+        control.append(
+          `<option value="${val}">${val}</option>`
+        )
+      } 
+      control.val(val);     
     } else {
       control[0].selectedIndex = -1;
     }
@@ -181,7 +188,7 @@ const addItem = () => {
     .on("click", itemClick);
 
   $(".container").append(item);
-  resetItemStyles(item);
+  resetStyles(item, itemParams);
 };
 
 const removeItem = () => {
@@ -455,8 +462,8 @@ const buildControls = parameters => {
       })
     )
   );
-
-  resetItemStyles(ITEM_SELECTOR);
+  resetStyles(CONTAINER_SELECTOR, containerParams)
+  resetStyles(ITEM_SELECTOR, itemParams);
 };
 
 const buildAux = () => {

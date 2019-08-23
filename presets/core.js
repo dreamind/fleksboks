@@ -102,3 +102,44 @@ PRESETS["3-row-mid-fluid"] = {
     },
   },
 };
+
+PRESETS["3-1-2"] = {
+  name: "Fixed header w. fixed left and fluid body",
+  itemCount: 3,
+  containerStyles: {
+    "flex-direction": "column",
+    "flex-wrap": "wrap",
+    "justify-content": "flex-start",
+    "align-items": "stretch",
+    "align-content": "stretch",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
+  },
+  commonItemStyles: {
+    "min-width": "0px",
+    "max-width": "none",    
+    "min-height": "0px",
+    "max-height": "none",
+    "flex-shrink": "0",
+    "flex-basis": "auto",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
+  },
+  itemStyles: {
+    "item-0": {
+      width: "100%",
+      height: "50px",
+      "flex-grow": "0",
+    },
+    "item-1": {
+      width: "auto",
+      height: "calc(100% - 50px)",
+      "flex-grow": "1",
+    },
+    "item-2": {
+      width: "auto",
+      height: "calc(100% - 50px)",
+      "flex-grow": "1",
+    },
+  },
+};

@@ -46,11 +46,11 @@ const getStyles = (target, whiteList) => {
   const styles = {};
   _.each(whiteList, (param) => {
     const { prop, values } = param;
-    const def = param.default || values[0];
+    // const def = param.default || values[0];
     let value = getStyleValues(target, prop).final;
-    if (!_.includes(values, value)) {
-      value = def;
-    }
+    // if (!_.includes(values, value)) {
+    //   value = def;
+    // }
     styles[prop] = value;
   });
   return styles;
