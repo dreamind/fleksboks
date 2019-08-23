@@ -124,7 +124,7 @@ const exportPreset = (code, name) => {
   let itemPreset;
 
   if (_.size(commonItemStyles) > 0) {
-    preset.push(objectifyStyles(commonItemStyles, "commonStyles"));
+    preset.push(objectifyStyles(commonItemStyles, "commonItemStyles"));
   }
   if (_.size(itemStyles) > 0) {
     itemPreset = _.map(itemStyles, objectifyStyles).join(",");
@@ -144,7 +144,8 @@ const exportPreset = (code, name) => {
 
 const applyPreset = preset => {
   const { itemCount, containerStyles, commonItemStyles, itemStyles } = preset;
-
+  
+  $(ITEM_SELECTOR).removeClass("selected");
   while (itemCount > numItems) {
     addItem();
   }
@@ -410,12 +411,12 @@ const buildControls = parameters => {
       controlWrap("select")
         .append(
           $(`<button>none</select>`).on("click", () => {
-            $(".item").removeClass("selected");
+            $(ITEM_SELECTOR).removeClass("selected");
           })
         )
         .append(
           $(`<button>all</select>`).on("click", () => {
-            $(".item").addClass("selected");
+            $(ITEM_SELECTOR).addClass("selected");
           })
         )
     )

@@ -1,8 +1,8 @@
 # fleksboks
 
-flexbox playground
+A minimalist two-level flexbox playground. You can play (selectively) with various flexbox settings and export the css.
 
-just load index.html in the browser 
+To run just load index.html in the browser.
 
 ## dependencies
 

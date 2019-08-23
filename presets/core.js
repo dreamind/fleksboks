@@ -12,7 +12,7 @@ PRESETS["default"] = {
     "overflow-x": "auto",
     "overflow-y": "auto",
   },
-  commonStyles: {
+  commonItemStyles: {
     width: "auto",
     "min-width": "0px",
     "max-width": "none",
@@ -39,10 +39,10 @@ PRESETS["3-col-mid-fluid"] = {
     "overflow-x": "auto",
     "overflow-y": "auto",
   },
-  commonStyles: {
+  commonItemStyles: {
     "min-width": "0px",
     "max-width": "none",
-    height: "auto",
+    height: "100%",
     "min-height": "0px",
     "max-height": "none",
     "flex-shrink": "0",
@@ -78,8 +78,8 @@ PRESETS["3-row-mid-fluid"] = {
     "overflow-x": "auto",
     "overflow-y": "auto",
   },
-  commonStyles: {
-    width: "auto",
+  commonItemStyles: {
+    width: "100%",
     "min-width": "0px",
     "max-width": "none",
     height: "50px",
