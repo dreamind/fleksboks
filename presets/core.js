@@ -107,7 +107,7 @@ PRESETS["3-1-2"] = {
   name: "Fixed header w. fixed left and fluid body",
   itemCount: 3,
   containerStyles: {
-    "flex-direction": "column",
+    "flex-direction": "row",
     "flex-wrap": "wrap",
     "justify-content": "flex-start",
     "align-items": "stretch",
@@ -117,7 +117,7 @@ PRESETS["3-1-2"] = {
   },
   commonItemStyles: {
     "min-width": "0px",
-    "max-width": "none",    
+    "max-width": "none",
     "min-height": "0px",
     "max-height": "none",
     "flex-shrink": "0",
@@ -132,14 +132,41 @@ PRESETS["3-1-2"] = {
       "flex-grow": "0",
     },
     "item-1": {
-      width: "auto",
+      width: "50px",
       height: "calc(100% - 50px)",
-      "flex-grow": "1",
+      "flex-grow": "0",
     },
     "item-2": {
       width: "auto",
       height: "calc(100% - 50px)",
       "flex-grow": "1",
     },
+  },
+};
+
+PRESETS["periodic"] = {
+  name: "Fixed size periodic table",
+  itemCount: 20,
+  containerStyles: {
+    "flex-direction": "row",
+    "flex-wrap": "wrap",
+    "justify-content": "center",
+    "align-items": "center",
+    "align-content": "center",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
+  },
+  commonItemStyles: {
+    width: "50px",
+    "min-width": "0px",
+    "max-width": "none",
+    height: "50px",
+    "min-height": "0px",
+    "max-height": "none",
+    "flex-grow": "0",
+    "flex-shrink": "0",
+    "flex-basis": "auto",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
   },
 };

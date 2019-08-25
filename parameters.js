@@ -127,7 +127,27 @@ const PARAMETERS = {
           ]
         }
       ]
-    }    
+    },
+    {
+      "prop": "align-self",
+      "values": [
+        "auto",
+        "flex-start",
+        "flex-end",
+        "center",
+        "baseline",
+        "stretch"
+      ]
+    },
+    {
+      "prop": "margin",
+      "values": [
+        "0",
+        "5px",
+        "10px",
+        "20px"
+      ]
+    }     
   ],
   "container": [
     {

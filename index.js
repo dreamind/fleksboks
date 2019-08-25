@@ -1,4 +1,4 @@
-// Dependecies: [util.js]
+// Dependecies: [presets/core.js, parameters.js, util.js]
 
 const DEFAULT_NUM_ITEMS = 4;
 const ITEM_SIZE = 200;
@@ -52,17 +52,15 @@ const loadStyles = (selector, whiteList, type = "item") => {
   }
 
   _.each(whiteList, (params, prop) => {
-    const options = params.values
+    const options = params.values;
     const values = styleSet[prop];
     const control = $("#" + type + "-" + prop);
     if (_.size(values) === 1) {
-      let val = _.keys(values)[0]
+      const val = _.keys(values)[0];
       if (!_.includes(options, val)) {
-        control.append(
-          `<option value="${val}">${val}</option>`
-        )
-      } 
-      control.val(val);     
+        control.append(`<option value="${val}">${val}</option>`);
+      }
+      control.val(val);
     } else {
       control[0].selectedIndex = -1;
     }
@@ -151,8 +149,8 @@ const exportPreset = (code, name) => {
 
 const applyPreset = preset => {
   const { itemCount, containerStyles, commonItemStyles, itemStyles } = preset;
-  
-  $(ITEM_SELECTOR).removeClass("selected");
+
+  selectNoItem(true);
   while (itemCount > numItems) {
     addItem();
   }
@@ -174,6 +172,17 @@ const applyPreset = preset => {
   loadStyles(CONTAINER_SELECTOR, containerParams, "container");
   loadStyles(ITEM_SELECTOR, itemParams, "item");
 };
+
+const applyStyles = () => {
+  selectNoItem(true);
+  const stylesheet = parseStyles($(`${STYLESHEET_SELECTOR} .content`).text());
+  _.each(stylesheet, ({ selector, styles }) => {
+    updateStyles(selector, styles);
+  });
+  loadStyles(CONTAINER_SELECTOR, containerParams, "container");
+  loadStyles(ITEM_SELECTOR, itemParams, "item");
+};
+
 /**
  * Adding/removing item
  */
@@ -188,12 +197,26 @@ const addItem = () => {
     .on("click", itemClick);
 
   $(".container").append(item);
+  // TO DO
+  //  Set styles to the last selected in controls
   resetStyles(item, itemParams);
 };
 
 const removeItem = () => {
   const idx = numItems-- - 1;
   $(`#item-${idx}`).remove();
+};
+
+const selectNoItem = preventLoad => {
+  $(ITEM_SELECTOR).removeClass("selected");
+  if (!preventLoad) {
+    loadStyles(ITEM_SELECTOR, itemParams, "item");
+  }
+};
+
+const selectAllItems = () => {
+  $(ITEM_SELECTOR).addClass("selected");
+  loadStyles(SELECTED_ITEM_SELECTOR, itemParams, "item");
 };
 
 const buildItems = (num = DEFAULT_NUM_ITEMS) => {
@@ -394,7 +417,7 @@ const buildControls = parameters => {
   buildControl(
     {
       prop: "pick",
-      default: 'default',
+      default: "default",
       values: PRESETS,
     },
     "preset"
@@ -416,16 +439,8 @@ const buildControls = parameters => {
     .append('<div class="heading">Items</div>')
     .append(
       controlWrap("select")
-        .append(
-          $(`<button>none</select>`).on("click", () => {
-            $(ITEM_SELECTOR).removeClass("selected");
-          })
-        )
-        .append(
-          $(`<button>all</select>`).on("click", () => {
-            $(ITEM_SELECTOR).addClass("selected");
-          })
-        )
+        .append($(`<button>none</select>`).on("click", selectNoItem))
+        .append($(`<button>all</select>`).on("click", selectAllItems))
     )
     .append(
       controlWrap("no. items")
@@ -452,7 +467,7 @@ const buildControls = parameters => {
   );
 
   controls.append('<div class="heading"></div>').append(
-    controlWrap("Export").append(
+    controlWrap("View").append(
       $(`<button>css</select>`).on("click", () => {
         const stylesheet = $(STYLESHEET_SELECTOR);
         const content = $(`${STYLESHEET_SELECTOR} .content`);
@@ -462,7 +477,7 @@ const buildControls = parameters => {
       })
     )
   );
-  resetStyles(CONTAINER_SELECTOR, containerParams)
+  resetStyles(CONTAINER_SELECTOR, containerParams);
   resetStyles(ITEM_SELECTOR, itemParams);
 };
 
@@ -474,6 +489,9 @@ const buildAux = () => {
   $(`${STYLESHEET_SELECTOR} .copy`).on("click", () => {
     copy(`${STYLESHEET_SELECTOR} .content`, CLIP_SELECTOR);
   });
+  $(`${STYLESHEET_SELECTOR} .apply`).on("click", () => {
+    applyStyles();
+  });
 };
 
 const setup = () => {
@@ -481,7 +499,7 @@ const setup = () => {
   buildControls(PARAMETERS);
   buildAux();
   resetContainer();
-  applyPreset('default');
+  applyPreset("default");
 };
 
 $(function() {

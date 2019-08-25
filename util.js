@@ -93,3 +93,35 @@ const objectifyStyles = (styles, key) => {
   kv = kv.join(',\n')
   return `'${key}': {\n${kv}}\n`;
 };
+
+const reEach = (regex, str) => {
+  const result = []
+  while (match = regex.exec(str)) {
+    result.push(match)
+  }
+  return result
+}
+
+const parseStyles = (str) => {
+  const stylesheet = []
+  const rules = reEach(/(\S+)\s*\{(.*?)\}/sg, str)
+  _.each(rules, (rule) => {
+    const selector = rule[1]
+    const block = rule[2]
+    const kvs = reEach(/\s*(\S+)\s*\:\s*(\S+)\s*?;/sg, block)
+    const styles = _.reduce(kvs, (all, {1: prop, 2: val}) => { all[prop] = val; return all }, {})
+    stylesheet.push({
+      selector,
+      styles
+    })
+  })
+  return stylesheet
+}
+
+const updateStyles = (selector, styles) => {
+  _.each(styles, (val, prop) => {
+    $(selector).css(prop, val);
+  })  
+}
+
+

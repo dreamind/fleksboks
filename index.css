@@ -1,6 +1,6 @@
-:root { 
-  --panel-width: 400px; 
-  --label-width: 100px; 
+:root {
+  --panel-width: 400px;
+  --label-width: 100px;
 }
 
 * {
@@ -32,11 +32,11 @@ body {
   width: var(--panel-width);
   top: 0;
   right: 0;
-  bottom: 0;  
+  bottom: 0;
   margin: 0;
   display: none;
   padding: 20px;
-  font-family: 'Courier New', Courier, monospace !important;
+  font-family: "Courier New", Courier, monospace !important;
   font-size: 12px;
   line-height: 14px;
   color: #f0f0f0;
@@ -46,8 +46,13 @@ body {
 }
 
 #stylesheet .content {
+  margin: 30px 0 0 0;
   overflow: auto;
-  height: 100%;
+  height: calc(100% - 30px);
+}
+
+#stylesheet .content:focus {
+  outline: 0px solid transparent;
 }
 
 #stylesheet .buttons {
@@ -61,7 +66,7 @@ body {
   flex-direction: row;
 }
 
-#stylesheet .buttons>div {
+#stylesheet .buttons > div {
   margin-left: 7px;
 }
 
@@ -184,4 +189,11 @@ body {
 
 button {
   margin-right: 4px;
+}
+
+select,
+option,
+button {
+  font-size: 10px;
+  font-family: sans-serif;
 }
