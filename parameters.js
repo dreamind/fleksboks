@@ -223,7 +223,16 @@ const PARAMETERS = {
           ]
         }
       ]
-    }
+    },
+    {
+      "prop": "padding",
+      "values": [
+        "0",
+        "5px",
+        "10px",
+        "20px"
+      ]
+    }     
   ]
 }
 

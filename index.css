@@ -70,7 +70,7 @@ body {
   margin-left: 7px;
 }
 
-.wrapper {
+#wrapper {
   margin: 0;
   position: absolute;
   top: 0;
@@ -83,7 +83,7 @@ body {
   align-items: center;
 }
 
-.resizer {
+#resizer {
   margin: 0;
   display: flex;
   justify-content: flex-start;
@@ -98,7 +98,7 @@ body {
   overflow: hidden;
 }
 
-.container {
+#container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -151,7 +151,7 @@ body {
   background-color: #90c0d0;
 }
 
-.controls {
+#controls {
   position: absolute;
   width: var(--panel-width);
   top: 0;
@@ -166,17 +166,19 @@ body {
 }
 
 .label {
-  display: inline-block;
   width: var(--label-width);
-  text-align: right;
   margin-right: 5px;
+  display: inline-block;
+  text-align: right;
 }
 
 .heading {
   width: var(--label-width);
+
+  margin: 8px 0;
+
   text-align: right;
   font-weight: bold;
-  margin: 8px 0;
 }
 
 .control {

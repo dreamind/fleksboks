@@ -1,4 +1,6 @@
 // Dependecies: [cash, lodash]
+// { prop1: val1; prop2: val2; } => a CSS declaration
+// selector { prop1: val1; prop2: val2; } => a CSS rule (styles)
 
 function copy(selector, clipSelector) {
   const text = $(selector).text();
@@ -34,7 +36,7 @@ const getStyleValues = (target, prop) => {
   return { original, computed, final };
 };
 
-const getStyle = (target, prop) => {
+const getStyleForDisplay = (target, prop) => {
   const { original, computed } = getStyleValues(target, prop);
   if (_.isNil(original) || original === computed) {
     return computed;
@@ -42,26 +44,23 @@ const getStyle = (target, prop) => {
   return `${original} (${computed})`;
 };
 
-const getStyles = (target, whiteList) => {
+const getStyles = (target, params) => {
   const styles = {};
-  _.each(whiteList, (param) => {
-    const { prop, values } = param;
-    // const def = param.default || values[0];
-    let value = getStyleValues(target, prop).final;
-    // if (!_.includes(values, value)) {
-    //   value = def;
-    // }
+  _.each(params, (param) => {
+    const { prop } = param;
+    const value = getStyleValues(target, prop).final;
     styles[prop] = value;
   });
   return styles;
 };
 
-const genStyleSet = (selector, whiteList) => {
+const genStyleSet = (selector, params) => {
   const styleSet = {};
   $(selector).each((i, target) => {
-    const styles = getStyles(target, whiteList);
-    const id = target.id || (target.data && target.data.id) || 'untitled';
-    _.each(_.keys(whiteList), prop => {
+    const styles = getStyles(target, params);
+    const id = target.id;
+    if (!id) { return; }
+    _.each(params, ({ prop }) => {
       if (!styleSet[prop]) {
         styleSet[prop] = {};
       }
@@ -76,22 +75,21 @@ const genStyleSet = (selector, whiteList) => {
 };
 
 const serializeStyles = (styles, selector) => {
-  let str = '';
+  let decl = '';
   _.each(styles, (val, prop) => {
-    str += `    ${prop}: ${val};\n`;
+    decl += `    ${prop}: ${val};\n`;
   });
-  return `${selector} {\n${str}}\n`;
+  return `${selector} {\n${decl}}\n`;
 };
 
 // Create key: { prop: val, ... } entry in string
-// key must be valid js key, e.g. without '-'
-const objectifyStyles = (styles, key) => {
-  let kv = [];
+const stringifyStyles = (styles, key) => {
+  let kvs = [];
   _.each(styles, (val, prop) => {
-    kv.push(`    '${prop}': '${val}'`);
+    kvs.push(`    '${prop}': '${val}'`);
   });
-  kv = kv.join(',\n')
-  return `'${key}': {\n${kv}}\n`;
+  kvs = kvs.join(',\n')
+  return `'${key}': {\n${kvs}}\n`;
 };
 
 const reEach = (regex, str) => {
@@ -107,8 +105,8 @@ const parseStyles = (str) => {
   const rules = reEach(/(\S+)\s*\{(.*?)\}/sg, str)
   _.each(rules, (rule) => {
     const selector = rule[1]
-    const block = rule[2]
-    const kvs = reEach(/\s*(\S+)\s*\:\s*(\S+)\s*?;/sg, block)
+    const decl = rule[2]
+    const kvs = reEach(/\s*(\S+)\s*\:\s*(\S+)\s*?;/sg, decl)
     const styles = _.reduce(kvs, (all, {1: prop, 2: val}) => { all[prop] = val; return all }, {})
     stylesheet.push({
       selector,
@@ -120,8 +118,6 @@ const parseStyles = (str) => {
 
 const updateStyles = (selector, styles) => {
   _.each(styles, (val, prop) => {
-    $(selector).css(prop, val);
+    $(selector).css(prop, _.isString(val) ? val : val + 'px');
   })  
 }
-
-

@@ -1,5 +1,7 @@
 const PRESETS = {};
 
+const SMALL = 100
+
 PRESETS["default"] = {
   name: "Default",
   itemCount: 4,
@@ -11,9 +13,11 @@ PRESETS["default"] = {
     "align-content": "stretch",
     "overflow-x": "auto",
     "overflow-y": "auto",
+    "padding": "0px"
   },
   commonItemStyles: {
     width: "auto",
+    "margin": "0px",
     "min-width": "0px",
     "max-width": "none",
     height: "auto",
@@ -40,6 +44,7 @@ PRESETS["3-col-mid-fluid"] = {
     "overflow-y": "auto",
   },
   commonItemStyles: {
+    "margin": "0px",
     "min-width": "0px",
     "max-width": "none",
     height: "100%",
@@ -52,11 +57,11 @@ PRESETS["3-col-mid-fluid"] = {
   },
   itemStyles: {
     "item-0": {
-      width: "50px",
+      width: SMALL,
       "flex-grow": "0",
     },
     "item-2": {
-      width: "50px",
+      width: SMALL,
       "flex-grow": "0",
     },
     "item-1": {
@@ -79,10 +84,11 @@ PRESETS["3-row-mid-fluid"] = {
     "overflow-y": "auto",
   },
   commonItemStyles: {
+    "margin": "0px",
     width: "100%",
     "min-width": "0px",
     "max-width": "none",
-    height: "50px",
+    height: SMALL,
     "min-height": "0px",
     "max-height": "none",
     "flex-shrink": "0",
@@ -116,6 +122,7 @@ PRESETS["3-1-2"] = {
     "overflow-y": "auto",
   },
   commonItemStyles: {
+    "margin": "0px",
     "min-width": "0px",
     "max-width": "none",
     "min-height": "0px",
@@ -128,25 +135,25 @@ PRESETS["3-1-2"] = {
   itemStyles: {
     "item-0": {
       width: "100%",
-      height: "50px",
+      height: SMALL,
       "flex-grow": "0",
     },
     "item-1": {
-      width: "50px",
-      height: "calc(100% - 50px)",
+      width: SMALL,
+      height: `calc(100% - ${SMALL}px)`,
       "flex-grow": "0",
     },
     "item-2": {
       width: "auto",
-      height: "calc(100% - 50px)",
+      height: `calc(100% - ${SMALL}px)`,
       "flex-grow": "1",
     },
   },
 };
 
-PRESETS["periodic"] = {
-  name: "Fixed size periodic table",
-  itemCount: 20,
+PRESETS["table"] = {
+  name: "Fixed size table",
+  itemCount: 16,
   containerStyles: {
     "flex-direction": "row",
     "flex-wrap": "wrap",
@@ -157,10 +164,11 @@ PRESETS["periodic"] = {
     "overflow-y": "auto",
   },
   commonItemStyles: {
-    width: "50px",
+    width: "100px",
+    "margin": "0px",
     "min-width": "0px",
     "max-width": "none",
-    height: "50px",
+    height: "100px",
     "min-height": "0px",
     "max-height": "none",
     "flex-grow": "0",
@@ -170,3 +178,60 @@ PRESETS["periodic"] = {
     "overflow-y": "auto",
   },
 };
+
+PRESETS["grid"] = {
+  name: "Grid with 8px gutter",
+  itemCount: 16,
+  containerStyles: {
+    "flex-direction": "row",
+    "flex-wrap": "wrap",
+    "justify-content": "flex-start",
+    "align-items": "flex-start",
+    "align-content": "flex-start",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
+    "padding": "4px"
+  },
+  commonItemStyles: {
+    width: "90px",
+    margin: "4px",
+    "min-width": "0px",
+    "max-width": "none",
+    height: "90px",
+    "min-height": "0px",
+    "max-height": "none",
+    "flex-grow": "0",
+    "flex-shrink": "0",
+    "flex-basis": "auto",
+    "overflow-x": "auto",
+    "overflow-y": "auto",
+  },
+};
+
+PRESETS['stretchy'] = { 
+  'name': '4x4 stretch',
+  'itemCount': 16,
+  'containerStyles': {
+  'flex-direction': 'row',
+  'flex-wrap': 'wrap',
+  'justify-content': 'center',
+  'align-items': 'center',
+  'align-content': 'center',
+  'overflow-x': 'auto',
+  'overflow-y': 'auto',
+  'padding': '0px'}
+,'commonItemStyles': {
+  'width': '25%',
+  'min-width': '0px',
+  'max-width': 'none',
+  'height': '25%',
+  'min-height': '0px',
+  'max-height': 'none',
+  'flex-grow': '1',
+  'flex-shrink': '1',
+  'flex-basis': 'auto',
+  'overflow-x': 'auto',
+  'overflow-y': 'auto',
+  'align-self': 'auto',
+  'margin': '0px'}
+}

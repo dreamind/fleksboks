@@ -4,13 +4,13 @@ const DEFAULT_NUM_ITEMS = 4;
 const ITEM_SIZE = 200;
 const CONTAINER_SIZE = 2 * ITEM_SIZE;
 const RESIZER_SIZE = 10; // padding-bottom and right of the resize
-const CONTAINER_SELECTOR = ".container";
+const CONTAINER_SELECTOR = "#container";
 const ITEM_SELECTOR = ".item";
 const PROPS_SELECTOR = "#props";
 const SELECTED_CLASS = "selected";
 const SELECTED_ITEM_SELECTOR = `${ITEM_SELECTOR}.${SELECTED_CLASS}`;
-const RESIZER_SELECTOR = ".resizer";
-const CONTROLS_SELECTOR = ".controls";
+const RESIZER_SELECTOR = "#resizer";
+const CONTROLS_SELECTOR = "#controls";
 const STYLESHEET_SELECTOR = "#stylesheet";
 const CLIP_SELECTOR = "#clip";
 
@@ -26,33 +26,44 @@ const resetContainer = () => {
     .css("height", l);
 };
 
-const resetStyle = (selector, param) => {
-  const { prop, values } = param;
-  const def = param.default || values[0];
-  update.item(prop, def, selector);
-  if (def === -1) {
-    $(selector).each((i, e) => {
-      e.selectedIndex = -1;
-    });
-  }
-};
-
-const resetStyles = (selector, whiteList) => {
-  _.each(whiteList, param => {
-    resetStyle(selector, param);
+const resetStyles = (selector, params) => {
+  _.each(params, param => {
+    const { prop, values } = param;
+    const val = param.default || values[0];    
+    if (val !== -1) {
+      $(selector).css(prop, _.isString(val) ? val : val + 'px');
+    }  
+    // if (val === -1) {
+    //   $(selector).each((i, e) => {
+    //     e.selectedIndex = -1;
+    //   });
+    // }
   });
 };
 
-const loadStyles = (selector, whiteList, type = "item") => {
-  const styleSet = genStyleSet(selector, whiteList);
+const lastItemStyles = (selector) => {
+  const styles = getStylesFromControls(itemParams, type = "item") 
+  updateStyles(selector, styles)
+};
+
+/**
+ * Load styles of selector to the control
+ * 
+ * @param {*} selector 
+ * @param {*} params 
+ * @param {*} type 
+ */
+const putStylesToControls = (selector, params, type = "item") => {
+  const styleSet = genStyleSet(selector, params);
 
   if (_.size(styleSet) === 0) {
     // nothing is selected
     return;
   }
 
-  _.each(whiteList, (params, prop) => {
-    const options = params.values;
+  _.each(params, (param) => {
+    const prop = param.prop
+    const options = param.values;
     const values = styleSet[prop];
     const control = $("#" + type + "-" + prop);
     if (_.size(values) === 1) {
@@ -67,12 +78,34 @@ const loadStyles = (selector, whiteList, type = "item") => {
   });
 };
 
-const getItemStyles = (selector, whiteList) => {
-  const styleSet = genStyleSet(selector, whiteList);
+/**
+ * Extract styles from control
+ * 
+ * @param {*} selector 
+ * @param {*} params Flat params
+ * @param {*} type 
+ */
+const getStylesFromControls = (params, type = "item") => {
+  const styles = {}
+
+  _.each(params, ({ prop, values }) => {
+    const control = $("#" + type + "-" + prop);
+    let val = control.val()
+    if (_.isNil(val)) {
+      val = values[0];
+    }
+    styles[prop] = val
+  });
+
+  return styles;
+};
+
+const getItemStyles = (selector, params) => {
+  const styleSet = genStyleSet(selector, params);
   const commonStyles = {};
   const itemStyles = {};
 
-  _.each(_.keys(whiteList), prop => {
+  _.each(_.keys(params), prop => {
     const tally = styleSet[prop];
     const values = _.keys(tally);
     if (_.size(values) === 1) {
@@ -125,14 +158,14 @@ const serializeStylesAll = () => {
 
 const exportPreset = (code, name) => {
   const { containerStyles, commonItemStyles, itemStyles } = getStylesAll();
-  let preset = [objectifyStyles(containerStyles, "containerStyles")];
+  let preset = [stringifyStyles(containerStyles, "containerStyles")];
   let itemPreset;
 
   if (_.size(commonItemStyles) > 0) {
-    preset.push(objectifyStyles(commonItemStyles, "commonItemStyles"));
+    preset.push(stringifyStyles(commonItemStyles, "commonItemStyles"));
   }
   if (_.size(itemStyles) > 0) {
-    itemPreset = _.map(itemStyles, objectifyStyles).join(",");
+    itemPreset = _.map(itemStyles, stringifyStyles).join(",");
     preset.push(`
       itemStyles: {
         ${itemPreset}
@@ -147,6 +180,19 @@ const exportPreset = (code, name) => {
   }`;
 };
 
+const updateStylesWithParams = (selector, styles, params) => {
+  _.each(params, param => {
+    const { prop, values } = param
+    let val
+    if (prop in styles) {
+      val = styles[prop]
+    } else {
+      val = param.default || values[0]
+    }
+    $(selector).css(prop, val);    
+  })  
+}
+
 const applyPreset = preset => {
   const { itemCount, containerStyles, commonItemStyles, itemStyles } = preset;
 
@@ -157,20 +203,13 @@ const applyPreset = preset => {
   while (itemCount < numItems) {
     removeItem();
   }
-
-  _.each(containerStyles, (val, prop) => {
-    update.container(prop, val);
-  });
-  _.each(commonItemStyles, (val, prop) => {
-    update.item(prop, val, ITEM_SELECTOR);
-  });
+  updateStylesWithParams(CONTAINER_SELECTOR, containerStyles, containerParams)
+  updateStyles(ITEM_SELECTOR, commonItemStyles)
   _.each(itemStyles, (styles, id) => {
-    _.each(styles, (val, prop) => {
-      update.item(prop, val, "#" + id);
-    });
+    updateStyles("#" + id, styles)
   });
-  loadStyles(CONTAINER_SELECTOR, containerParams, "container");
-  loadStyles(ITEM_SELECTOR, itemParams, "item");
+  putStylesToControls(CONTAINER_SELECTOR, containerParams, "container");
+  putStylesToControls(ITEM_SELECTOR, itemParams, "item");
 };
 
 const applyStyles = () => {
@@ -179,8 +218,8 @@ const applyStyles = () => {
   _.each(stylesheet, ({ selector, styles }) => {
     updateStyles(selector, styles);
   });
-  loadStyles(CONTAINER_SELECTOR, containerParams, "container");
-  loadStyles(ITEM_SELECTOR, itemParams, "item");
+  putStylesToControls(CONTAINER_SELECTOR, containerParams, "container");
+  putStylesToControls(ITEM_SELECTOR, itemParams, "item");
 };
 
 /**
@@ -196,10 +235,8 @@ const addItem = () => {
     .on("mouseout", itemOut)
     .on("click", itemClick);
 
-  $(".container").append(item);
-  // TO DO
-  //  Set styles to the last selected in controls
-  resetStyles(item, itemParams);
+  $(CONTAINER_SELECTOR).append(item);
+  lastItemStyles(item)
 };
 
 const removeItem = () => {
@@ -210,13 +247,13 @@ const removeItem = () => {
 const selectNoItem = preventLoad => {
   $(ITEM_SELECTOR).removeClass("selected");
   if (!preventLoad) {
-    loadStyles(ITEM_SELECTOR, itemParams, "item");
+    putStylesToControls(ITEM_SELECTOR, itemParams, "item");
   }
 };
 
 const selectAllItems = () => {
   $(ITEM_SELECTOR).addClass("selected");
-  loadStyles(SELECTED_ITEM_SELECTOR, itemParams, "item");
+  putStylesToControls(SELECTED_ITEM_SELECTOR, itemParams, "item");
 };
 
 const buildItems = (num = DEFAULT_NUM_ITEMS) => {
@@ -232,9 +269,10 @@ const buildItems = (num = DEFAULT_NUM_ITEMS) => {
 
 const update = {
   container: (prop, val) => {
-    container.css(prop, val);
+    container.css(prop, _.isString(val) ? val : val + 'px');
   },
   item: (prop, val, selector) => {
+    val = _.isString(val) ? val : val + 'px'
     if (selector) {
       $(selector).css(prop, val);
     } else if ($(SELECTED_ITEM_SELECTOR).length) {
@@ -319,11 +357,11 @@ const itemOver = e => {
           let v;
           if (_.isArray(p)) {
             v = _.map(p, p1 => {
-              return getStyle(target, p1);
+              return getStyleForDisplay(target, p1);
             }).join(", ");
             p = p[0];
           } else {
-            v = i ? getStyle(target, p) : item.data("index");
+            v = i ? getStyleForDisplay(target, p) : item.data("index");
           }
           return (
             t +
@@ -358,7 +396,7 @@ const itemClick = e => {
   } else {
     $(target).toggleClass(SELECTED_CLASS);
   }
-  loadStyles(SELECTED_ITEM_SELECTOR, itemParams, "item");
+  putStylesToControls(SELECTED_ITEM_SELECTOR, itemParams, "item");
 };
 
 const buildControl = (param, type) => {
@@ -413,6 +451,10 @@ const buildControls = parameters => {
     );
   }
 
+  function button(label) {
+    return $(`<button>${label}</button>`)
+  }
+
   controls.append('<div class="heading">Presets</div>');
   buildControl(
     {
@@ -424,11 +466,9 @@ const buildControls = parameters => {
   );
 
   controls.append('<div class="heading">Container</div>');
-
   _.each(containerTree, param => {
     buildControl(param, "container");
   });
-
   controls.append(
     controlWrap("container size").append(
       $(`<button>reset</select>`).on("click", resetContainer)
@@ -439,28 +479,26 @@ const buildControls = parameters => {
     .append('<div class="heading">Items</div>')
     .append(
       controlWrap("select")
-        .append($(`<button>none</select>`).on("click", selectNoItem))
-        .append($(`<button>all</select>`).on("click", selectAllItems))
+        .append(button('none').on("click", selectNoItem))
+        .append(button('all').on("click", selectAllItems))
     )
     .append(
       controlWrap("no. items")
-        .append($(`<button>-</select>`).on("click", removeItem))
-        .append($(`<button>+</select>`).on("click", addItem))
+        .append(button('-').on("click", removeItem))
+        .append(button('+').on("click", addItem))
     );
-
   _.each(itemTree, param => {
     buildControl(param, "item");
   });
-
   controls.append(
     controlWrap("content")
       .append(
-        $(`<button>index</select>`).on("click", () => {
+        button('index').on("click", () => {
           itemContent("index");
         })
       )
       .append(
-        $(`<button>random</select>`).on("click", () => {
+        button('random').on("click", () => {
           itemContent("random");
         })
       )
@@ -468,7 +506,7 @@ const buildControls = parameters => {
 
   controls.append('<div class="heading"></div>').append(
     controlWrap("View").append(
-      $(`<button>css</select>`).on("click", () => {
+      button('css').on("click", () => {
         const stylesheet = $(STYLESHEET_SELECTOR);
         const content = $(`${STYLESHEET_SELECTOR} .content`);
         content.empty();
@@ -499,7 +537,7 @@ const setup = () => {
   buildControls(PARAMETERS);
   buildAux();
   resetContainer();
-  applyPreset("default");
+  applyPreset(PRESETS["default"]);
 };
 
 $(function() {
