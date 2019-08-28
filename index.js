@@ -32,12 +32,7 @@ const resetStyles = (selector, params) => {
     const val = param.default || values[0];    
     if (val !== -1) {
       $(selector).css(prop, _.isString(val) ? val : val + 'px');
-    }  
-    // if (val === -1) {
-    //   $(selector).each((i, e) => {
-    //     e.selectedIndex = -1;
-    //   });
-    // }
+    }
   });
 };
 
