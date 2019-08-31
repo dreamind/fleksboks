@@ -1,24 +1,57 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>fleksboks</title>
+  <title>fleksboks - flexbox playground</title>
   <meta charset="UTF-8">
-  <link href="./index.css" type="text/css" rel="stylesheet"></link>
+  <link href="./index.css" type="text/css" rel="stylesheet">
+  </link>
   <script src="./lib/cash/cash.min.js"></script>
   <script src="./lib/lodash/lodash.min.js"></script>
   <script src="./presets/core.js"></script>
-  <script src="./parameters.js"></script>  
+  <script src="./parameters.js"></script>
   <script src="./util.js"></script>
   <script src="./index.js"></script>
 </head>
-<body>
+
+<body>  
   <div id="wrapper">
     <div id="resizer">
-      <div id="container">    
-      </div>      
+      <div id="container">
+      </div>
     </div>
   </div>
   <div id="controls">
+    <div class="buttons">
+      <div class="info" title="Info">
+        <div>ℹ</div> ︎
+        <div class="content">
+          <h2>flexbox playground</h2>
+          <p><strong>Item info</strong> - hover over item box to show its basic CSS styles.</p>
+          <div>
+            <div>
+              <span class="prop">item</span><span class="val">index</span>
+            </div>
+            <div>
+              <span class="prop">width</span><span class="val">value (computed), min, max</span>
+            </div>
+            <div>
+              <span class="prop">height</span><span class="val">value (computed), min, max</span>
+            </div>
+            <div>
+              <span class="prop">flex</span><span class="val">grow shrink basis</span>
+            </div>
+            <div>
+              <span class="prop">overflow</span><span class="val">value</span>
+            </div>
+          </div> 
+          <p><strong>Item selection</strong> - click item box to toggle selection, use Shift key to accummulate selection.</p>
+          <p><strong>CSS editing</strong> - View > CSS to display raw CSS. You can make changes and apply them 
+            (only limited properties shown in the panel).
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
   <div id="props">
   </div>
@@ -26,10 +59,12 @@
     <div class="buttons">
       <div class="apply" title="Apply changes">✓</div>
       <div class="copy" title="Copy to clipboard">📋</div>
-      <div class="close">✕</div>    
+      <div class="close">✕</div>
     </div>
     <pre class="content" contenteditable="true" spellcheck="false"></pre>
   </div>
   <textarea id="clip"></textarea>
+  <div id="title">fleksboks</div>
 </body>
+
 </html>
