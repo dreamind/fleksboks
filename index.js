@@ -337,37 +337,36 @@ const itemOver = e => {
   const item = $(target);
   const width = item.css("width");
   const height = item.css("height");
+  const html = _.reduce(
+    [
+      "item",
+      ["width", "min-width", "max-width"],
+      ["height", "min-height", "max-height"],
+      "flex",
+      "overflow",
+    ],
+    (t, p, i) => {
+      let v;
+      if (_.isArray(p)) {
+        v = _.map(p, p1 => {
+          return getStyleForDisplay(target, p1);
+        }).join(", ");
+        p = p[0];
+      } else {
+        v = i ? getStyleForDisplay(target, p) : item.data("index");
+      }
+      return (
+        t +
+        `<div>
+        <span class="prop">${p}</span><span class="val">${v}</span>
+        </div>`
+      );
+    },
+    ""
+  )
 
   $(PROPS_SELECTOR)
-    .html(
-      _.reduce(
-        [
-          "item",
-          ["width", "min-width", "max-width"],
-          ["height", "min-height", "max-height"],
-          "flex",
-          "overflow",
-        ],
-        (t, p, i) => {
-          let v;
-          if (_.isArray(p)) {
-            v = _.map(p, p1 => {
-              return getStyleForDisplay(target, p1);
-            }).join(", ");
-            p = p[0];
-          } else {
-            v = i ? getStyleForDisplay(target, p) : item.data("index");
-          }
-          return (
-            t +
-            `<div>
-            <span class="prop">${p}</span><span class="val">${v}</span>
-            </div>`
-          );
-        },
-        ""
-      )
-    )
+    .html(html)
     .css("left", left)
     .css("top", top)
     .css("width", width)
@@ -377,7 +376,7 @@ const itemOver = e => {
 
 const itemOut = e => {
   // const { target: { id: prop, value } } = e
-  $("#props").hide();
+  $(PROPS_SELECTOR).hide();
 };
 
 const itemClick = e => {
@@ -501,7 +500,7 @@ const buildControls = parameters => {
 
   controls.append('<div class="heading"></div>').append(
     controlWrap("View").append(
-      button('css').on("click", () => {
+      button('CSS').on("click", () => {
         const stylesheet = $(STYLESHEET_SELECTOR);
         const content = $(`${STYLESHEET_SELECTOR} .content`);
         content.empty();
@@ -532,6 +531,7 @@ const setup = () => {
   buildControls(PARAMETERS);
   buildAux();
   resetContainer();
+  $(PROPS_SELECTOR).hide();
   applyPreset(PRESETS["default"]);
 };
 
